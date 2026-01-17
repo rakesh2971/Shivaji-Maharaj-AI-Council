@@ -4,7 +4,8 @@ import { SimulationState, AgentRole, AgentResponse, HistoryItem } from './types'
 import { Timeline } from './components/Timeline';
 import { AgentCard } from './components/AgentCard';
 import { generateRoyalDecreePDF } from './utils/pdfGenerator';
-import { Send, BookOpen, Crown, AlertOctagon, Loader2, Star, CheckCircle2, FileDown } from 'lucide-react';
+import { LandingPage } from './components/LandingPage';
+import { Send, BookOpen, Crown, AlertOctagon, Loader2, Star, CheckCircle2, FileDown, ArrowLeft } from 'lucide-react';
 
 const INITIAL_STEPS = [
   { id: 1, phase: 'Retrieval' as const, activeAgents: [], status: 'pending' as const, logs: [] },
@@ -15,6 +16,7 @@ const INITIAL_STEPS = [
 ];
 
 export default function App() {
+  const [showLanding, setShowLanding] = useState(true);
   const [query, setQuery] = useState('');
   // History State for Memory
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -122,12 +124,24 @@ export default function App() {
     }
   };
 
+  if (showLanding) {
+    return <LandingPage onEnter={() => setShowLanding(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#1c1917] bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] text-stone-200 p-4 md:p-8 font-sans selection:bg-amber-900/50">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
         
         {/* HEADER */}
-        <header className="text-center space-y-2 py-8 border-b border-stone-800">
+        <header className="text-center space-y-2 py-4 border-b border-stone-800 relative">
+          <button 
+            onClick={() => setShowLanding(true)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-stone-500 hover:text-amber-500 transition-colors"
+            title="Return to Home"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          
           <div className="flex items-center justify-center gap-3 mb-2">
             <Crown className="text-amber-600" size={32} />
             <h1 className="text-3xl md:text-5xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-600">
