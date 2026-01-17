@@ -1,0 +1,5 @@
+{
+  "name": "Ashta Pradhan AI Council",
+  "description": "A production-grade AI simulation of Chhatrapati Shivaji Maharaj's Council of Eight Ministers. This application demonstrates client-side multi-agent orchestration, simulated RAG (Retrieval Augmented Generation), and structured deliberation flows using the Gemini API.",
+  "requestFramePermissions": []
+}
