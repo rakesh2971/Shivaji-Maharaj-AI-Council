@@ -30,13 +30,15 @@ This project utilizes a **Router-Solver-Critic** architecture powered by **Googl
 
 ```mermaid
 graph LR
-    A[User Query] --> B[Orchestrator (Peshwa)];
-    B --> C{Router};
-    C -->|Finance| D[Amatya Agent];
-    C -->|Defense| E[Senapati Agent];
-    C -->|Diplomacy| F[Sumant Agent];
-    D & E & F --> G[Judicial Critique];
-    G --> H[Final Verdict];
+    A[User Query] --> B[Orchestrator - Peshwa]
+    B --> C{Router}
+    C -->|Finance| D[Amatya Agent]
+    C -->|Defense| E[Senapati Agent]
+    C -->|Diplomacy| F[Sumant Agent]
+    D --> G[Judicial Critique]
+    E --> G
+    F --> G
+    G --> H[Final Verdict]
 ```
 
 1.  **Historical RAG (Retrieval Augmented Generation):** The system first queries the *Adnyapatra* (Royal Edict) and historical archives to ground the context.
