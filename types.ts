@@ -1,3 +1,4 @@
+
 export enum AgentRole {
   PESHWA = 'Peshwa',
   AMATYA = 'Amatya',
@@ -54,6 +55,16 @@ export interface SimulationState {
   finalVerdict?: AgentResponse;
   steps: SimulationStep[];
   error?: string;
+}
+
+export interface SavedSimulation {
+  id: string;
+  userId: string;
+  query: string;
+  date: number; // Timestamp
+  ministerResponses: Record<string, AgentResponse>;
+  critique?: AgentResponse;
+  finalVerdict: AgentResponse;
 }
 
 export interface RAGDocument {

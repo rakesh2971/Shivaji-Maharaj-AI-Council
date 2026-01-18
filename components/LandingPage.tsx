@@ -1,15 +1,41 @@
 import React from 'react';
-import { Crown, Shield, Users, ArrowRight, Scale, Cpu, Network, Database, Layers, Heart, Sparkles, Atom, Palette } from 'lucide-react';
+import { Crown, Shield, Users, ArrowRight, Scale, Sparkles, Atom, Database, Palette, Heart, LogIn } from 'lucide-react';
 import { AGENTS } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LandingPageProps {
   onEnter: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
+  const { user, signIn, loading } = useAuth();
+
   return (
     <div className="min-h-screen bg-[#1c1917] bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] text-stone-200 font-sans selection:bg-amber-900/50 flex flex-col">
       
+      {/* Auth Corner */}
+      <div className="absolute top-4 right-4 z-50">
+        {!loading && (
+          user ? (
+             <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-stone-800">
+                <img src={user.photoURL || ''} alt="User" className="w-8 h-8 rounded-full border border-amber-500/50" />
+                <div className="text-left hidden sm:block">
+                  <p className="text-xs text-stone-400">Welcome,</p>
+                  <p className="text-sm font-bold text-amber-500">{user.displayName?.split(' ')[0]}</p>
+                </div>
+             </div>
+          ) : (
+            <button 
+              onClick={signIn}
+              className="flex items-center gap-2 bg-stone-900/80 hover:bg-stone-800 text-stone-300 px-4 py-2 rounded-full border border-stone-700 transition-all font-medium text-sm backdrop-blur-sm"
+            >
+              <LogIn size={16} />
+              <span>Sign In</span>
+            </button>
+          )
+        )}
+      </div>
+
       {/* Hero Section */}
       <div className="flex-grow flex flex-col items-center justify-center p-8 text-center relative overflow-hidden min-h-[80vh]">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/80 via-transparent to-[#1c1917] pointer-events-none" />
@@ -92,7 +118,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
                <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-200">Meet the Ashta Pradhan</h3>
              </div>
              
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-20">
                 {Object.values(AGENTS).map((agent, i) => (
                   <div key={agent.id} className="p-6 rounded-xl bg-stone-900/30 border border-stone-800 hover:bg-stone-900 hover:border-stone-700 transition-all group flex flex-col items-center text-center">
                     <div className="mb-4 p-3 rounded-full bg-stone-950 shadow-inner group-hover:scale-110 transition-transform">
@@ -108,97 +134,84 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
                 ))}
              </div>
           </div>
-        </div>
-      </div>
 
-      {/* Under The Hood Section */}
-      <div className="bg-[#1c1917] py-20 px-6 border-t border-stone-800 relative z-20">
-        <div className="max-w-6xl mx-auto text-center">
-            <div className="mb-12">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-[0.3em] mb-4">Engineering</h2>
-              <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-200">Powered by Agentic AI</h3>
+          {/* ENGINEERING SECTION (Restored) */}
+          <div className="border-t border-stone-900 pt-20 pb-10">
+            <div className="text-center mb-12">
+               <h2 className="text-sm font-bold text-amber-500 uppercase tracking-[0.3em] mb-4">Engineering</h2>
+               <h3 className="text-3xl md:text-4xl font-serif font-bold text-stone-200">Powered by Agentic AI</h3>
             </div>
 
             {/* Flowchart SVG */}
-            <div className="mb-16 overflow-x-auto">
-              <div className="min-w-[900px]">
-                  <svg viewBox="0 0 900 180" className="w-full h-auto max-w-4xl mx-auto opacity-90 hover:opacity-100 transition-opacity">
-                      <defs>
-                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                          <polygon points="0 0, 10 3.5, 0 7" fill="#78716c" />
-                        </marker>
-                      </defs>
-                      
-                      {/* User Query */}
-                      <g transform="translate(50, 70)">
-                        <rect width="120" height="50" rx="8" className="fill-stone-900 stroke-stone-700 stroke-2" />
-                        <text x="60" y="30" textAnchor="middle" className="fill-stone-300 text-sm font-bold">User Query</text>
-                      </g>
+            <div className="max-w-4xl mx-auto mb-16 overflow-x-auto p-4">
+               <div className="min-w-[600px] flex justify-center">
+                 <svg width="800" height="200" viewBox="0 0 800 200" className="w-full">
+                    {/* Definitions for arrow markers */}
+                    <defs>
+                      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#78716c" />
+                      </marker>
+                    </defs>
 
-                      {/* Arrow */}
-                      <line x1="170" y1="95" x2="210" y2="95" className="stroke-stone-600 stroke-2" markerEnd="url(#arrowhead)" />
+                    {/* Nodes */}
+                    <g className="text-xs font-mono">
+                       {/* Node 1: User Query */}
+                       <rect x="50" y="80" width="100" height="40" rx="4" fill="#1c1917" stroke="#78716c" strokeWidth="1" />
+                       <text x="100" y="105" textAnchor="middle" fill="#a8a29e">User Query</text>
 
-                      {/* Orchestrator */}
-                      <g transform="translate(220, 70)">
-                        <rect width="120" height="50" rx="8" className="fill-stone-900 stroke-amber-600 stroke-2" />
-                        <text x="60" y="30" textAnchor="middle" className="fill-amber-500 text-sm font-bold">Orchestrator</text>
-                      </g>
+                       {/* Arrow 1 */}
+                       <line x1="150" y1="100" x2="190" y2="100" stroke="#78716c" strokeWidth="1" markerEnd="url(#arrow)" />
 
-                      {/* Arrow */}
-                      <line x1="340" y1="95" x2="380" y2="95" className="stroke-stone-600 stroke-2" markerEnd="url(#arrowhead)" />
+                       {/* Node 2: Orchestrator */}
+                       <rect x="200" y="70" width="120" height="60" rx="4" fill="#292524" stroke="#f59e0b" strokeWidth="1" />
+                       <text x="260" y="105" textAnchor="middle" fill="#fcd34d" fontWeight="bold">Orchestrator</text>
+                       
+                       {/* Arrow 2 (Split) */}
+                       <line x1="320" y1="100" x2="360" y2="100" stroke="#78716c" strokeWidth="1" markerEnd="url(#arrow)" />
 
-                      {/* Parallel Agents */}
-                      <g transform="translate(390, 45)">
-                        <rect width="140" height="100" rx="8" className="fill-stone-900/50 stroke-stone-700 stroke-2 stroke-dasharray-4" />
-                        <text x="70" y="20" textAnchor="middle" className="fill-stone-500 text-xs uppercase tracking-wide">Parallel Agents</text>
-                        
-                        <rect x="20" y="35" width="100" height="20" rx="4" className="fill-stone-800" />
-                        <text x="70" y="49" textAnchor="middle" className="fill-stone-400 text-xs">Agent A (Finance)</text>
-                        
-                        <rect x="20" y="65" width="100" height="20" rx="4" className="fill-stone-800" />
-                        <text x="70" y="79" textAnchor="middle" className="fill-stone-400 text-xs">Agent B (Defense)</text>
-                      </g>
+                       {/* Node 3: Parallel Agents (Stack effect) */}
+                       <rect x="370" y="75" width="120" height="50" rx="4" fill="#1c1917" stroke="#78716c" strokeWidth="1" />
+                       <rect x="375" y="80" width="120" height="50" rx="4" fill="#1c1917" stroke="#78716c" strokeWidth="1" />
+                       <rect x="380" y="85" width="120" height="50" rx="4" fill="#1c1917" stroke="#a8a29e" strokeWidth="1" />
+                       <text x="440" y="115" textAnchor="middle" fill="#e7e5e4">Parallel Agents</text>
 
-                      {/* Arrow */}
-                      <line x1="530" y1="95" x2="570" y2="95" className="stroke-stone-600 stroke-2" markerEnd="url(#arrowhead)" />
+                       {/* Arrow 3 */}
+                       <line x1="500" y1="110" x2="540" y2="110" stroke="#78716c" strokeWidth="1" markerEnd="url(#arrow)" />
 
-                      {/* Debate Loop */}
-                      <g transform="translate(580, 70)">
-                        <rect width="120" height="50" rx="8" className="fill-stone-900 stroke-orange-600 stroke-2" />
-                        <text x="60" y="30" textAnchor="middle" className="fill-orange-500 text-sm font-bold">Critique Loop</text>
-                      </g>
+                       {/* Node 4: Debate/Critique */}
+                       <rect x="550" y="80" width="100" height="40" rx="4" fill="#1c1917" stroke="#ef4444" strokeWidth="1" />
+                       <text x="600" y="105" textAnchor="middle" fill="#fca5a5">Critique</text>
 
-                      {/* Arrow */}
-                      <line x1="700" y1="95" x2="740" y2="95" className="stroke-stone-600 stroke-2" markerEnd="url(#arrowhead)" />
+                       {/* Arrow 4 */}
+                       <line x1="650" y1="100" x2="690" y2="100" stroke="#78716c" strokeWidth="1" markerEnd="url(#arrow)" />
 
-                      {/* Final Verdict */}
-                      <g transform="translate(750, 70)">
-                        <rect width="120" height="50" rx="8" className="fill-stone-900 stroke-emerald-600 stroke-2" />
-                        <text x="60" y="30" textAnchor="middle" className="fill-emerald-500 text-sm font-bold">Final Verdict</text>
-                      </g>
-                  </svg>
-              </div>
+                       {/* Node 5: Verdict */}
+                       <rect x="700" y="70" width="80" height="60" rx="4" fill="#1c1917" stroke="#10b981" strokeWidth="1" />
+                       <circle cx="740" cy="90" r="12" fill="#064e3b" />
+                       <path d="M734 90 l4 4 l8 -8" stroke="#34d399" strokeWidth="2" fill="none" />
+                       <text x="740" y="120" textAnchor="middle" fill="#6ee7b7">Decree</text>
+                    </g>
+                 </svg>
+               </div>
             </div>
 
-            {/* Tech Badges */}
+            {/* Badges */}
             <div className="flex flex-wrap justify-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border bg-stone-900/50 border-stone-800 text-stone-300">
-                <Sparkles size={16} className="text-blue-500" />
-                <span className="font-mono text-sm">Google Gemini 2.0</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border bg-stone-900/50 border-stone-800 text-stone-300">
-                <Atom size={16} className="text-cyan-400" />
-                <span className="font-mono text-sm">React 19</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border bg-stone-900/50 border-stone-800 text-stone-300">
-                <Database size={16} className="text-emerald-500" />
-                <span className="font-mono text-sm">Vector RAG</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full border bg-stone-900/50 border-stone-800 text-stone-300">
-                <Palette size={16} className="text-pink-400" />
-                <span className="font-mono text-sm">Tailwind CSS</span>
-              </div>
+              <span className="px-4 py-2 rounded-full bg-blue-900/20 border border-blue-800 text-blue-400 text-sm font-mono flex items-center gap-2">
+                <Atom size={16} /> React 19
+              </span>
+              <span className="px-4 py-2 rounded-full bg-emerald-900/20 border border-emerald-800 text-emerald-400 text-sm font-mono flex items-center gap-2">
+                <Sparkles size={16} /> Gemini 2.0 Flash
+              </span>
+              <span className="px-4 py-2 rounded-full bg-cyan-900/20 border border-cyan-800 text-cyan-400 text-sm font-mono flex items-center gap-2">
+                <Palette size={16} /> Tailwind CSS
+              </span>
+               <span className="px-4 py-2 rounded-full bg-orange-900/20 border border-orange-800 text-orange-400 text-sm font-mono flex items-center gap-2">
+                <Database size={16} /> Firebase
+              </span>
             </div>
+          </div>
+
         </div>
       </div>
       
