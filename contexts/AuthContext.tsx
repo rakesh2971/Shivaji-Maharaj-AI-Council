@@ -26,7 +26,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const auth = AuthService.getAuthInstance();
     if (auth) {
       const unsubscribe = onAuthStateChanged(auth, (u) => {
-        setUser(u);
+        // If we have a real firebase user, use it.
+        if (u) {
+          setUser(u);
+        } else {
+          // If firebase says logged out, but we are not in guest mode, clear user.
+          // Note: Guest mode is manual, so onAuthStateChanged returning null 
+          // shouldn't auto-logout a manually set guest user if we were persisting it,
+          // but here we treat firebase as source of truth unless we explicitly set guest.
+          setUser((prev) => (prev?.uid === 'guest-user' ? prev : null));
+        }
         setLoading(false);
       });
       return () => unsubscribe();
@@ -38,15 +47,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async () => {
     try {
       await AuthService.signInWithGoogle();
-    } catch (e) {
+    } catch (e: any) {
       console.error("Sign in failed", e);
-      alert("Failed to sign in. Please check Firebase configuration.");
+      
+      // Handle Unauthorized Domain (common in previews) or generic config errors
+      if (e?.code === 'auth/unauthorized-domain' || e?.code === 'auth/operation-not-allowed') {
+        console.warn("Domain not authorized by Firebase. Falling back to Guest Mode.");
+        
+        // Create a Mock/Guest User
+        const guestUser = {
+          uid: 'guest-user',
+          displayName: 'Guest Minister',
+          email: 'guest@council.local',
+          photoURL: null,
+          emailVerified: true,
+          isAnonymous: true,
+          metadata: {},
+          providerData: [],
+          refreshToken: '',
+          tenantId: null,
+          delete: async () => {},
+          getIdToken: async () => '',
+          getIdTokenResult: async () => ({} as any),
+          reload: async () => {},
+          toJSON: () => ({}),
+        } as unknown as User;
+        
+        setUser(guestUser);
+      } else if (e?.code !== 'auth/popup-closed-by-user') {
+        alert(`Sign in failed: ${e.message}`);
+      }
     }
   };
 
   const signOut = async () => {
     try {
-      await AuthService.signOut();
+      if (user?.uid === 'guest-user') {
+        setUser(null);
+      } else {
+        await AuthService.signOut();
+      }
     } catch (e) {
       console.error("Sign out failed", e);
     }

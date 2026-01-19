@@ -1,55 +1,73 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut } from 'firebase/auth';
 import { getFirestore, collection, addDoc, query, where, orderBy, getDocs } from 'firebase/firestore';
-import { SavedSimulation, AgentResponse } from '../types';
+import { SavedSimulation } from '../types';
 
-// NOTE: In a real environment, replace these with process.env.VITE_FIREBASE_...
-// If keys are missing, the app will gracefully degrade to "Guest Mode" (no saving).
 // Casting to any to avoid "Property 'env' does not exist on type 'ImportMeta'" TS error
 const env = (import.meta as any).env || {};
 
+// Config uses Environment variables if available, otherwise falls back to the provided keys
 const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY || "mock-key",
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID
+  apiKey: env.VITE_FIREBASE_API_KEY || "AIzaSyB0TMqU753TInUDqT7ApN6HvKLVErkTsBE",
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "astha-pradhan-mandal.firebaseapp.com",
+  projectId: env.VITE_FIREBASE_PROJECT_ID || "astha-pradhan-mandal",
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "astha-pradhan-mandal.firebasestorage.app",
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "1014715902814",
+  appId: env.VITE_FIREBASE_APP_ID || "1:1014715902814:web:5104d6ba27fab6418b7dcf"
 };
 
 let app, auth, db;
-let isConfigured = false;
+export let isFirebaseConfigured = false;
 
 try {
-  if (env.VITE_FIREBASE_API_KEY) {
+  // We check if the apiKey is present (which it now is, due to the fallback)
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "mock-key") {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
-    isConfigured = true;
+    isFirebaseConfigured = true;
   } else {
     console.warn("Firebase Config missing. Auth and History features will be disabled.");
   }
 } catch (e) {
   console.error("Firebase Initialization Error:", e);
+  isFirebaseConfigured = false;
 }
 
 export const AuthService = {
   signInWithGoogle: async () => {
-    if (!isConfigured || !auth) throw new Error("Firebase not configured");
+    if (!isFirebaseConfigured || !auth) throw new Error("Firebase not configured");
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider);
   },
   signOut: async () => {
-    if (!isConfigured || !auth) return;
+    if (!isFirebaseConfigured || !auth) return;
     return firebaseSignOut(auth);
   },
   getAuthInstance: () => auth
 };
 
 export const HistoryService = {
-  // Fixed signature: Omit 'date' as it is generated inside the function
   saveSimulation: async (userId: string, data: Omit<SavedSimulation, 'id' | 'userId' | 'date'>) => {
-    if (!isConfigured || !db) return;
+    // FALLBACK: Use LocalStorage if Firebase is down or User is Guest
+    if (!isFirebaseConfigured || !db || userId === 'guest-user') {
+      try {
+        const localData = localStorage.getItem('astha_history');
+        const history = localData ? JSON.parse(localData) : [];
+        const newEntry = {
+          id: `local-${Date.now()}`,
+          userId,
+          ...data,
+          date: Date.now()
+        };
+        localStorage.setItem('astha_history', JSON.stringify([newEntry, ...history]));
+      } catch (e) {
+        console.error("LocalStorage Save Error:", e);
+      }
+      return;
+    }
+
+    // REAL: Firestore
     try {
       await addDoc(collection(db, 'simulations'), {
         userId,
@@ -62,7 +80,18 @@ export const HistoryService = {
   },
 
   getHistory: async (userId: string): Promise<SavedSimulation[]> => {
-    if (!isConfigured || !db) return [];
+    // FALLBACK: Use LocalStorage if Firebase is down or User is Guest
+    if (!isFirebaseConfigured || !db || userId === 'guest-user') {
+      try {
+        const localData = localStorage.getItem('astha_history');
+        const history = localData ? JSON.parse(localData) : [];
+        return history.filter((h: any) => h.userId === userId);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    // REAL: Firestore
     try {
       const q = query(
         collection(db, 'simulations'),

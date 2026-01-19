@@ -9,8 +9,6 @@ import { Send, BookOpen, Crown, AlertOctagon, Loader2, Star, CheckCircle2, FileD
 import { useAuth } from './contexts/AuthContext';
 import { HistoryService } from './lib/firebase';
 import { HistorySidebar } from './components/HistorySidebar';
-import { SettingsModal } from './components/SettingsModal';
-import { getApiKey } from './services/gemini';
 
 const INITIAL_STEPS = [
   { id: 1, phase: 'Retrieval' as const, activeAgents: [], status: 'pending' as const, logs: [] },
@@ -23,7 +21,6 @@ const INITIAL_STEPS = [
 export default function App() {
   const { user } = useAuth();
   const [showLanding, setShowLanding] = useState(true);
-  const [showSettings, setShowSettings] = useState(false);
   
   // Default sidebar to open on desktop, closed on mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
@@ -93,12 +90,6 @@ export default function App() {
   const handleSimulate = async () => {
     if (!query.trim() || state.isSimulating) return;
 
-    // Check for API Key before starting
-    if (!getApiKey()) {
-      setShowSettings(true);
-      return;
-    }
-
     // Reset UI State for new run
     setFeedback({ rating: 0, comment: '', submitted: false, isSubmitting: false });
     setState({
@@ -125,7 +116,6 @@ export default function App() {
     let critiqueData: AgentResponse | undefined;
 
     try {
-      // Pass 'language' to the orchestrator
       const generator = runSimulationOrchestration(query, history);
       for await (const update of generator) {
         setState(prev => {
@@ -168,16 +158,7 @@ export default function App() {
 
     } catch (e: any) {
       console.error(e);
-      if (e.message === "API_KEY_MISSING") {
-        setShowSettings(true);
-        setState(prev => ({ 
-          ...prev, 
-          isSimulating: false, 
-          error: "API Key is required to proceed." 
-        }));
-      } else {
-        setState(prev => ({ ...prev, isSimulating: false }));
-      }
+      setState(prev => ({ ...prev, isSimulating: false }));
     } finally {
       if (state.isSimulating) { // Double check we are still simulating before turning off
           setState(prev => ({ ...prev, isSimulating: false }));
@@ -237,16 +218,12 @@ export default function App() {
   return (
     <div className="flex h-screen bg-[#1c1917] bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] text-stone-200 font-sans overflow-hidden">
       
-      {/* SETTINGS MODAL */}
-      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} />
-
       {/* SIDEBAR */}
       <HistorySidebar 
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)} 
         onSelectSimulation={loadFromHistory}
         onNewChat={handleNewChat}
-        onOpenSettings={() => setShowSettings(true)}
         simulations={savedSimulations}
         isLoading={isLoadingHistory}
       />

@@ -1,7 +1,7 @@
 # 👑 Ashta Pradhan AI Council
 
 ![Project Banner](https://img.shields.io/badge/Status-Production-emerald)
-![Tech](https://img.shields.io/badge/AI-Google_Gemini_2.0-blue)
+![Tech](https://img.shields.io/badge/AI-Google_Gemini_3.0-blue)
 ![Stack](https://img.shields.io/badge/React-19-cyan)
 ![Style](https://img.shields.io/badge/Tailwind-CSS-pink)
 
@@ -26,7 +26,7 @@ When you ask a question (e.g., *"Should we expand trade with the British East In
 
 ## ⚙️ Architecture: "The Governance Protocol"
 
-This project utilizes a **Router-Solver-Critic** architecture powered by **Google Gemini 2.0**.
+This project utilizes a **Router-Solver-Critic** architecture powered by **Google Gemini 3.0**.
 
 ```mermaid
 graph LR
@@ -43,8 +43,8 @@ graph LR
 
 1.  **Historical RAG (Retrieval Augmented Generation):** The system first queries the *Adnyapatra* (Royal Edict) and historical archives to ground the context.
 2.  **Intelligent Routing:** The Peshwa agent determines which of the 8 ministers are required.
-3.  **Parallel Deliberation:** Selected agents run in parallel (using `gemini-3-flash`) to generate domain-specific advice.
-4.  **Judicial Review:** The Nyayadhish agent (using `gemini-3-pro`) critiques the advice, looking for risks or contradictions.
+3.  **Parallel Deliberation:** Selected agents run in parallel (using `gemini-3-flash-preview`) to generate domain-specific advice.
+4.  **Judicial Review:** The Nyayadhish agent (using `gemini-3-pro-preview`) critiques the advice, looking for risks or contradictions.
 5.  **Synthesis:** The final verdict balances all viewpoints into an actionable decree.
 
 ## 👥 The Council Agents
@@ -66,7 +66,7 @@ Each agent is prompted with a specific personality and **Optimization Function**
 
 *   **Frontend:** React 19, TypeScript
 *   **Styling:** Tailwind CSS (Dark, Historical Aesthetic)
-*   **AI Model:** Google Gemini API (`gemini-2.0-flash` & `gemini-2.0-pro`)
+*   **AI Model:** Google Gemini API (`gemini-3-flash-preview` & `gemini-3-pro-preview`)
 *   **Architecture:** Client-side LangGraph-inspired Agentic Workflow
 *   **Icons:** Lucide React
 *   **PDF Generation:** jsPDF

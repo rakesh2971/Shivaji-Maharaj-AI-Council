@@ -201,7 +201,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
                 <Atom size={16} /> React 19
               </span>
               <span className="px-4 py-2 rounded-full bg-emerald-900/20 border border-emerald-800 text-emerald-400 text-sm font-mono flex items-center gap-2">
-                <Sparkles size={16} /> Gemini 2.0 Flash
+                <Sparkles size={16} /> Gemini 3.0
               </span>
               <span className="px-4 py-2 rounded-full bg-cyan-900/20 border border-cyan-800 text-cyan-400 text-sm font-mono flex items-center gap-2">
                 <Palette size={16} /> Tailwind CSS

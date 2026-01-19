@@ -1,6 +1,6 @@
 import React from 'react';
 import { SavedSimulation } from '../types';
-import { X, MessageSquare, Plus, LogOut, LogIn, Crown, User, Settings } from 'lucide-react';
+import { X, MessageSquare, Plus, LogOut, LogIn, Crown, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 interface HistorySidebarProps {
@@ -8,7 +8,6 @@ interface HistorySidebarProps {
   onClose: () => void;
   onSelectSimulation: (sim: SavedSimulation) => void;
   onNewChat: () => void;
-  onOpenSettings: () => void;
   simulations: SavedSimulation[];
   isLoading: boolean;
 }
@@ -18,7 +17,6 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
   onClose, 
   onSelectSimulation, 
   onNewChat,
-  onOpenSettings,
   simulations,
   isLoading
 }) => {
@@ -124,14 +122,6 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
 
           {/* Footer / User Profile */}
           <div className="p-4 border-t border-stone-800 bg-stone-950 space-y-2">
-            <button 
-              onClick={onOpenSettings}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-stone-900 text-stone-400 hover:text-stone-200 transition-colors"
-            >
-              <Settings size={18} />
-              <span className="text-sm font-medium">API Settings</span>
-            </button>
-
             {user ? (
               <div className="flex items-center justify-between p-2 rounded-lg hover:bg-stone-900 transition-colors group cursor-pointer" onClick={(e) => {
                 // Optional: Open a user menu
