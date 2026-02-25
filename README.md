@@ -101,6 +101,16 @@ Each agent is prompted with a specific personality and **Optimization Function**
     npm run dev
     ```
 
+## ☁️ Deployment (Render/Vercel)
+
+When deploying to a static site host, ensure you add the following **Environment Variables** in your dashboard settings:
+
+| Variable | Description |
+| :--- | :--- |
+| `VITE_API_KEY` | **Required.** Your Google Gemini API Key. |
+| `VITE_FIREBASE_API_KEY` | Optional. Overrides default Firebase config. |
+| `VITE_FIREBASE_PROJECT_ID` | Optional. Overrides default Firebase config. |
+
 ## 📸 Screenshots
 
 ### The Landing Page
