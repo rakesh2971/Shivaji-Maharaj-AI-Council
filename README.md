@@ -81,8 +81,8 @@ Each agent is prompted with a specific personality and **Optimization Function**
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/yourusername/ashta-pradhan-ai.git
-    cd ashta-pradhan-ai
+    git clone https://github.com/rakesh2971/Shivaji-Maharaj-AI-Council.git
+    cd Shivaji-Maharaj-AI-Council
     ```
 
 2.  **Install Dependencies**
@@ -111,13 +111,7 @@ When deploying to a static site host, ensure you add the following **Environment
 | `VITE_FIREBASE_API_KEY` | Optional. Overrides default Firebase config. |
 | `VITE_FIREBASE_PROJECT_ID` | Optional. Overrides default Firebase config. |
 
-## 📸 Screenshots
 
-### The Landing Page
-*A cinematic entry point introducing the Council.*
-
-### The Durbar (Simulation)
-*Real-time visualization of the Router deciding which agents to summon.*
 
 ## 📄 License
 
